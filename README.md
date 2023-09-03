@@ -12,9 +12,7 @@ This application leverages the [react-big-calendar](https://www.npmjs.com/packag
 
 Before you begin, ensure you have the following prerequisites in place:
 
-1. **Node.js**: Make sure you have Node.js installed. You can download it from the [official Node.js website](https://nodejs.org/).
-
-2. **MongoDB**: You need to have MongoDB installed for database setup. If you haven't installed MongoDB yet, please follow the instructions on the [MongoDB website](https://www.mongodb.com/) to get it up and running.
+1. **MongoDB**: You need to have MongoDB installed for database setup. If you haven't installed MongoDB yet, please follow the instructions on the [MongoDB website](https://www.mongodb.com/) to get it up and running.
 
  
 
