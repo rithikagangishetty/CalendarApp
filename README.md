@@ -2,7 +2,11 @@
 
 ## Overview
 
-This README provides essential information for setting up and understanding the Calendar Web Application. This application leverages the [react-big-calendar](https://www.npmjs.com/package/react-big-calendar) npm package as its foundation for the calendar page.
+This README provides essential information for setting up and understanding the Calendar Web Application. 
+
+The Calendar Web Application is a web-based calendar application that enables users to create events. Additionally, users have the ability to add their friends as connections and invite them to join events.
+
+This application leverages the [react-big-calendar](https://www.npmjs.com/package/react-big-calendar)  as its base for the calendar page.
 
 ## Prerequisites
 
@@ -19,10 +23,6 @@ Before you begin, ensure you have the following prerequisites in place:
 
 To access the Calendar Web Application, open your web browser and navigate to http://192.168.4.153:5004.
 
-
-
-   ```bash
-   git clone <repository_url>
 
 
 
