@@ -1,0 +1,39 @@
+﻿a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+.my-heading {
+    margin: 20px 0;
+}
+.modal-title-center {
+    text-align: center;
+}
+.rbc-header{
+    background:#79b8e4;
+}
+.rbc-events-container {
+    width:100% !important;
+}
+
+.rbc-addons-dnd .rbc-addons-dnd-drag-ghost {
+    display: none !important;
+}
+/* Hide the time intervals in the day header */
+
+
+html { font-size: 14px; }
+
+@media (min-width: 768px) {
+    html { font-size: 16px; }
+    header{
+        flex-direction: column, 
+    }
+    content {
+        padding: 10px, 
+    }
+
+    
+}
+
+.box-shadow { box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05); }

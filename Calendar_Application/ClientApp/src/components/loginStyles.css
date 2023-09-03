@@ -1,0 +1,329 @@
+/* loginStyles.css */
+
+body {
+    background-color: transparent;
+    background-image: url("C:\Users\GANGISHETTY RITHIKA\Downloads\17973908.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+    margin: 0; /* Reset default body margin */
+    
+}
+.left-aligned-input {
+
+    text-align: left;
+}
+.signup-button {
+    color: blue; /* or any color you prefer */
+    cursor: pointer;
+    text-decoration: underline;
+}
+/*.customTableCell {
+    padding: 10px;
+    white-space: normal;
+    word-break: break-all;
+    background-color: white;
+}*/
+.customTableCell {
+    padding: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: white;
+}
+
+    .customTableCell.expanded {
+        white-space: normal;
+        word-break: break-all;
+    }
+
+.CustomTable {
+    /*border-collapse: collapse;*/
+    padding: 5px;
+    width: 100%;
+    border: 1px solid black;
+}
+    .CustomTable tr {
+        border-bottom: 1px solid black;
+        /*border-top:1px solid black;*//* Add a black border to the bottom of each row */
+    }
+    .CustomTable th,
+    .CustomTable td {
+        padding: 8px; /* Add padding to the cells for better spacing */
+    }
+.calendarContainerStyle {
+    height: 90vh;
+    background: white; 
+    width: 100%;
+    padding-top: 40px; 
+    padding-left: 55px;
+}
+
+
+.form-inline {
+    display: flex;
+   
+}
+
+    /* Optional: Add spacing between label and input */
+.form-label {
+    
+    margin-right: 10px;
+}
+.truncate {
+    white-space: normal;
+    word-break: break-all;
+}
+.datetime-group {
+    display: flex;
+}
+.truncated {
+    display: inline-block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    /*cursor: pointer;*/
+    width:425px;
+   
+}
+
+    .truncated.expanded {
+        white-space: normal;
+        word-wrap: break-word;
+    }
+    .expand{
+        width:100%;
+    }
+
+.datetime-label {
+    margin-right: 10px; /* Add spacing between label and DatePicker */
+}
+
+.datetime-picker {
+    flex: 1;
+}
+
+    /* Adjust DatePicker width as needed */
+    .datetime-picker .react-datepicker-wrapper {
+        width: 100%;
+    }
+
+.login-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    min-height: 100vh; /* Instead of height: 100vh */
+    padding: 20px; /* Use padding instead of padding-left */
+    background-color: transparent;
+}
+
+
+
+
+.my-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    max-width: 600px;
+    width: 100%; /* Use relative width for responsiveness */
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: floralwhite;
+  
+}
+
+/* Improve font sizing for readability on smaller screens */
+.my-heading-1 {
+    font-weight: bold;
+    font-size: 28px;
+    color: #0056b3;
+    font-family: Calibri, sans-serif;
+}
+
+.my-heading-2 {
+    font-weight: bold;
+    font-size: 24px;
+    color: #333;
+    font-family: Calibri, sans-serif;
+}
+
+/* Set a max-width for better readability on larger screens */
+.form-control {
+    width: 400px;
+   text-align:center;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #333;
+    margin-bottom: 10px;
+}
+.formControl {
+    width: 600px;
+    padding: 12px;
+    font-size: 16px;
+    justify-content:center;
+    border: 1px solid #ccc;
+    text-align: center;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #333;
+}
+.form-control:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+@media (max-width: 768px) {
+    .form-control,
+    .formControl, .btn-primary ,.connections-container , .button-container ,.CustomTable ,.customTableCell ,.expanded ,.hide ,.login-container , .modal-container , .my-form
+    , .my-heading-1 ,.my-heading-2 ,.truncate ,.btnPrimary {
+        max-width: 100%; 
+        width:100%;/* Allow the input to take the full available width on smaller screens */
+        
+    }
+}
+@media (max-width:300px) {
+    .calendarContainerStyle {
+        height: 100%;
+        background: white;
+        width:100%;
+       
+    }
+}
+@media (max-width: 768px) {
+   .expand{
+       width:100%;
+   }
+    .truncated {
+        width: 300px;
+    }
+}
+
+.btn-primary {
+    width: 100%; /* Make the button full width */
+    padding: 10px;
+    font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+.btnPrimary {
+    width: 200px; /* Make the button full width */
+    padding: 10px;
+    font-size: 18px;
+    justify-content: flex-end;
+    border: none;
+    border-radius: 4px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+}
+
+/* Make the modal overlay responsive */
+/*.modal-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+    .modal-container.hide {
+        display: none;
+    }*/
+/* Update connections page container styles for responsiveness */
+.connections-container {
+    text-align: center;
+    padding: 50px 0; /* Add more space for smaller screens */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.style{
+    margin-bottom:20px;
+    font-size:20px;
+    text-align:center;
+}
+
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: dodgerblue;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.logout-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background-color: indianred;
+    border: none;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+
+tagcontainer {
+    
+    
+    margin-top: 10px;
+    width: 100%;
+   
+}
+
+.tag {
+    margin: 20px;
+    display: inline-block;
+    align-items: center;
+    background-color: white;
+    padding: 4px 8px;
+    border-radius: 16px;
+    color: black;
+}
+
+    .tag span {
+        margin-right: 8px;
+    }
+
+    .tag .add-icon {
+        cursor: pointer;
+        color: #28a745;
+        border-radius: 50%;
+      
+        font-size:15px;
+       
+        align-items: center;
+        justify-content: center;
+        background-color:white;
+       
+    }
+
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+    .button-container button {
+        margin: 0 5px; /* Reduce margins for smaller screens */
+        padding: 8px 15px; /* Adjust padding for smaller buttons */
+    }
