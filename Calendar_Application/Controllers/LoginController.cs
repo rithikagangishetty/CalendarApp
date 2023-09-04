@@ -71,7 +71,6 @@ namespace Calenderwebapp.Controllers
             if (userData == null || !valid)
             {
                 return NotFound();
-
             }
             var user = _loginSupervisor.Signup(userData);
             if (user == null) { return BadRequest(); }
