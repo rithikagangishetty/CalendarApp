@@ -239,9 +239,16 @@ function Login() {
             alert(error);
         });
     }
+    /**
+     * Handles the signUp state change.
+     */
+    function handleSignUp() {
+        setEmailId("");
+        setSignUp(!signUp);
+    }
 
     /**
-     * Handle the SignUp/LogIn form submission.
+     * Handles the SignUp/LogIn form submission.
      * If the email is valid and present already, it won't store again; otherwise, it creates a new document in the collection.
      * @param {FormEvent} event - The form submission event.
      */

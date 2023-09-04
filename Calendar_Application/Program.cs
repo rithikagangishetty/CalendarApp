@@ -1,4 +1,3 @@
-using Main.Models;
 using Main.Supervisor;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -63,11 +62,7 @@ app.UseSpa(spa =>
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
-
-    // Retrieve an instance of the User class
     var user = serviceProvider.GetRequiredService<IUser>();
-
-    // Call the SetReminderTask method
     user.StartReminderTimer();
 }
 app.Run();

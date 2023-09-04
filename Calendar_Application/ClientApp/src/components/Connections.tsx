@@ -25,14 +25,15 @@ function Connections() {
     const baseUrl = process.env.REACT_APP_URL;
 
 
-
+  
     //UseEffect renders the Get() and GetAll() function whenever a change is occured which can be obtained by currentTaskType.
     useEffect(() => {
                 Get();
              GetAll();
         
     }, [currentTaskType]);
-    /**
+
+/**
  * Function to handle closing the modal and resetting the connection state.
  */
     const handleCloseModal = () => {
@@ -59,7 +60,8 @@ function Connections() {
     function goBack() {
         navigate(`/Home/${id}`);
     }
-   
+
+ 
     /**
    * This function takes the emailId of the connection and gets the object Id of the user.
    * After getting the object Id of the connection, it shows the connectionId calendar.
