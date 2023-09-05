@@ -12,8 +12,9 @@ This application leverages the [react-big-calendar](https://www.npmjs.com/packag
 
 Before you begin, ensure you have the following prerequisites in place:
 
-1. **MongoDB**: You need to have MongoDB installed for database setup. If you haven't installed MongoDB yet, please follow the instructions on the [MongoDB website](https://www.mongodb.com/) to get it up and running.
-
+1. **MongoDB**: You need to have MongoDB installed for database setup. If you haven't installed MongoDB yet, please follow the instructions on the [MongoDB website](https://www.mongodb.com/) to get it up and running. MongoDB shell version v5.0.14.
+2. **Node.js**: Node.js is required to run the application. If you haven't installed Node.js yet, please download and install version v18.15.0
+it from the  [Node.js official website](https://nodejs.org/).
  
 
 
