@@ -1,6 +1,7 @@
 ﻿using Main.Models;
 using Main.Supervisor;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using System.Text.RegularExpressions;
 namespace Calenderwebapp.Controllers
     
@@ -10,9 +11,11 @@ namespace Calenderwebapp.Controllers
     public class LoginController : Controller
     {
         private readonly ILoginSupervisor _loginSupervisor;
-        public LoginController(ILoginSupervisor loginSupervisor)
+        private readonly ILogger<LoginController> _logger;
+        public LoginController(ILoginSupervisor loginSupervisor, ILogger<LoginController> logger)
         {
             _loginSupervisor = loginSupervisor;
+            _logger = logger;
         }
 
         /// <summary>
@@ -35,25 +38,27 @@ namespace Calenderwebapp.Controllers
        
         public ActionResult<ConnectionDetails> Login(ConnectionDetails userData)
         {
-            
+            _logger.LogInformation("Login process started for user with email: {Email}", userData.EmailId);
+
             var valid = IsValidEmail(userData.EmailId);
             if (userData == null&& !valid) 
 
             {
-                
-                return BadRequest("invalid data");
+                _logger.LogWarning("Invalid user data received in the login request.");
+                return BadRequest("Invalid data");
              
             }
             var user = _loginSupervisor.login(userData);
             if (user == null)
             {
+                _logger.LogInformation("User not found. Signing up user with email: {Email}", userData.EmailId);
                 var final = _loginSupervisor.Signup(userData);
-
-              
+                _logger.LogInformation("User signed up successfully with email: {Email}", userData.EmailId);
                 return final;
 
             }
-            return  user; 
+            _logger.LogInformation("User logged in successfully.");
+            return user; 
            
             
         }
@@ -63,20 +68,21 @@ namespace Calenderwebapp.Controllers
         /// </summary>
         /// <param name="userData"></param>
         /// <returns>Details of the user if it success, else badRequest</returns>
-        [HttpPost]
+        //[HttpPost]
 
-        public ActionResult<ConnectionDetails> Signup(ConnectionDetails userData)
-        {
-            var valid = IsValidEmail(userData.EmailId);
-            if (userData == null || !valid)
-            {
-                return NotFound();
-            }
-            var user = _loginSupervisor.Signup(userData);
-            if (user == null) { return BadRequest(); }
+        //public ActionResult<ConnectionDetails> Signup(ConnectionDetails userData)
+        //{
+        //    var valid = IsValidEmail(userData.EmailId);
+        //    if (userData == null || !valid)
+        //    {
+               
+        //        return NotFound();
+        //    }
+        //    var user = _loginSupervisor.Signup(userData);
+        //    if (user == null) { return BadRequest(); }
 
-            return user;
-        }
+        //    return user;
+        //}
 
     }
 }

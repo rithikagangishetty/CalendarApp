@@ -10,14 +10,20 @@ using System.Text.RegularExpressions;
 
 using Microsoft.AspNetCore.Mvc;
 using Main.Repository;
+using Microsoft.Extensions.Logging;
 
 namespace Main.Supervisor
 {
     public class LoginSupervisor :ILoginSupervisor
     {
         private readonly ILogin _login;
-        public LoginSupervisor(ILogin login) =>
-           _login = login;
+        private readonly ILogger<ILoginSupervisor> _logger;
+        public LoginSupervisor(ILogin login, ILogger<ILoginSupervisor> logger)
+        {
+            _login = login;
+            _logger = logger;
+        }
+
         /// <summary>
         /// This function checks whether the EmailId entered is already present in the database.
         /// </summary>
@@ -25,19 +31,25 @@ namespace Main.Supervisor
         /// <returns>If present the user details</returns>
         public ConnectionDetails? login(ConnectionDetails userData)
         {
+            _logger.LogInformation("login method with email: {Email} is called", userData.EmailId);
+
             if (userData is null|| userData.EmailId is null)
             {
-               
+                _logger.LogWarning("Invalid user Data");
+
                 return null;
             }
 
             var user = _login.login(userData.EmailId);
             if(user is null)
             {
+                _logger.LogInformation("Email: {Email} not found", userData.EmailId);
+
                 return null;
             }
             var result = new ConnectionDetails(user);
-            
+            _logger.LogInformation("Email: {Email} found", userData.EmailId);
+
             return result;
 
         }
@@ -48,8 +60,13 @@ namespace Main.Supervisor
         /// <returns>If it is valid true, else false</returns>
         static bool IsValidEmail(string email)
         {
-            string pattern = @"^[\w\.-]+@[\w\.-]+\.\w+$";
-            return Regex.IsMatch(email, pattern);
+            if (!string.IsNullOrEmpty(email))
+            {
+                string pattern = @"^[\w\.-]+@[\w\.-]+\.\w+$";
+
+                return Regex.IsMatch(email, pattern);
+            }
+            return false;
         }
 
         /// <summary>
@@ -59,20 +76,28 @@ namespace Main.Supervisor
         /// <returns> the new user details that are created</returns>
         public ConnectionDetails? Signup(ConnectionDetails userData)
         {
-            if(userData.EmailId is null) { return null; }
-            var valid = IsValidEmail(userData.EmailId);
+            _logger.LogInformation("Sign Up method is called");
 
-            if (userData == null|| !valid)
+            if(userData == null)
             {
-               
-               return null;
+                return null;
             }
-                var finalData = new ConnectionData(userData);
+            var valid = IsValidEmail(userData.EmailId);
+            if ( !valid)
+            {
+                _logger.LogWarning("Email Id is invalid/null");
+                return null;
+            }
+
+            var finalData = new ConnectionData(userData);
                 var user = _login.signup(finalData);
 
-            if(user is null) { return null; }
+            if(user is null) {
+                _logger.LogWarning("Sign Up Failed");
+                return null; }
                 var result = new ConnectionDetails(user);
-                return result;
+            _logger.LogWarning("Sign Up Successful");
+            return result;
            
         }
 

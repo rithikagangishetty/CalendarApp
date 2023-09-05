@@ -9,6 +9,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading.Tasks;
 using MongoDB.Driver;
+using Microsoft.Extensions.Logging;
+using System.Web.Helpers;
 
 namespace Calenderwebapp.Controllers
 {
@@ -18,9 +20,11 @@ namespace Calenderwebapp.Controllers
     {
        
         private readonly IConnectionSupervisor _connectionSupervisor;
-        public ConnectionController(IConnectionSupervisor connectionSupervisor)
+        private readonly ILogger<ConnectionController> _logger;
+        public ConnectionController(IConnectionSupervisor connectionSupervisor, ILogger<ConnectionController> logger)
         {
             _connectionSupervisor = connectionSupervisor;
+            _logger = logger;
         }
         /// <summary>
         /// Takes object Id and returns email Id of the user
@@ -31,16 +35,20 @@ namespace Calenderwebapp.Controllers
         [HttpGet]
         public async Task<ActionResult<ConnectionDetails>> GetUser(string id)
         {
+            _logger.LogInformation("GetUser method is called with id: {Id}", id);
             if (string.IsNullOrEmpty(id))
             {
+                _logger.LogWarning("Invalid id parameter: {Id}", id);
                 return BadRequest("Invalid id parameter.");
             }
             var connection = await _connectionSupervisor.GetEmailId(id);
             if (connection is null)
             {
+                _logger.LogInformation("User with id {Id} not found.", id);
                 return NotFound();
             }
 
+            _logger.LogInformation("User with id {Id} found.", id);
             return connection;
         }
 
@@ -51,7 +59,10 @@ namespace Calenderwebapp.Controllers
         [HttpGet]
         public async Task<ActionResult<List<string>>> Get()
         {
+            _logger.LogInformation("Get method is called");
+
             var res = await _connectionSupervisor.Get();
+            _logger.LogInformation("Get method executed successfully");
             return res;
         }
 
@@ -63,16 +74,20 @@ namespace Calenderwebapp.Controllers
         [HttpGet]
         public async Task<ActionResult<ConnectionDetails>> GetId(string email)
         {
+            _logger.LogInformation("GetId method is called with email: {EmailId}", email);
+
             if (string.IsNullOrEmpty(email))
             {
+                _logger.LogWarning("Invalid email parameter: {EmailId}", email);
                 return BadRequest("Invalid email parameter.");
             }
             var connection = await _connectionSupervisor.GetId(email);
             if (connection is null)
             {
+                _logger.LogInformation("User not found for the given email: {EmailId}", email);
                 return NotFound();
             }
-
+            _logger.LogInformation("User found for email: {EmailId}", email);
             return connection;
         }
 
@@ -87,15 +102,20 @@ namespace Calenderwebapp.Controllers
        
         public async Task<ActionResult<ConnectionDetails>> GetEmail(string id)
         {
+            _logger.LogInformation("GetEmail method is called with id: {Id}", id);
             if (string.IsNullOrEmpty(id))
             {
+                _logger.LogWarning("Invalid id parameter: {Id}", id);
                 return BadRequest("Invalid id parameter.");
             }
             var user=await _connectionSupervisor.GetEmail(id);
             if(user is null)
             {
+                _logger.LogWarning("User not found");
+
                 return NotFound();
             }
+            _logger.LogInformation("GetEmail method is succesfully executed");
             return user;
         }
 
@@ -106,18 +126,21 @@ namespace Calenderwebapp.Controllers
         [HttpPost]
         public async Task<IActionResult> Post(ConnectionDetails user)
         {
+            _logger.LogInformation("Post Method is called");
             if (user == null)
             {
+                _logger.LogWarning("Invalid user data");
                 return BadRequest("Invalid user data.");
             }
           var result=  await _connectionSupervisor.Post(user);
             if (result is null)
             {
-                return BadRequest("Invalid user data.");
+                _logger.LogWarning("User not added ");
+                return BadRequest("Post method is unsuccessful");
             }
-
+            _logger.LogInformation("Post Method is executed");
             return CreatedAtAction(nameof(Get), new { id = user.Id }, user);
-
+          
         }
 
         [HttpPut]
@@ -128,15 +151,19 @@ namespace Calenderwebapp.Controllers
         /// <returns>if the update is succesfully done then ok else a badRequest will be sent</returns>
         public async Task<IActionResult> Update(ConnectionDetails user)
         {
+            _logger.LogInformation("Update method for connection called.");
             if (user == null)
             {
+                _logger.LogWarning("Invalid user data received.");
                 return BadRequest("Invalid user data.");
             }
            var res= await  _connectionSupervisor.Update(user);
             if (res is null)
             {
-                return BadRequest();
+                _logger.LogError("Failed to update user data.");
+                return BadRequest("Failed to update user data.");
             }
+            _logger.LogInformation("User data updated successfully.");
             return Ok();
             
         }
@@ -150,17 +177,21 @@ namespace Calenderwebapp.Controllers
        
         public async Task<IActionResult> Delete(string emailId, string id)
         {
+            _logger.LogInformation("Delete method for connection called.");
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(emailId))
             {
+                _logger.LogWarning("Invalid id or emailId received.");
                 return BadRequest("Invalid id or emailId parameters.");
             }
             
             var final= await _connectionSupervisor.Delete(emailId,id);
             if (final is null)
             {
+                _logger.LogError("Failed to delete the user data.");
                 return BadRequest();
             }
-        return Ok();
+            _logger.LogInformation("User data deleted successfully.");
+            return Ok();
              
         }
     }

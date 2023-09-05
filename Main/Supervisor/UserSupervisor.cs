@@ -18,10 +18,12 @@ namespace Main.Supervisor
     {
         private readonly IUser _users;
         private readonly IConnection _connections;
-        public UserSupervisor(IUser Users, IConnection connections)
+        private readonly ILogger<IUserSupervisor> _logger;
+        public UserSupervisor(IUser Users, IConnection connections, ILogger<IUserSupervisor> logger)
         {
             _users = Users;
             _connections = connections;
+            _logger = logger;
 
 
         }
@@ -32,8 +34,11 @@ namespace Main.Supervisor
         /// <returns></returns>
         public async Task<List<UserDetails>?> GetEvents(string id)
         {
+            _logger.LogInformation("GetEvents in supervisor is called");
             if (id == null)
             {
+                _logger.LogWarning("User Id is null : {Id}",id);
+
                 return null;
             }
 
@@ -43,7 +48,7 @@ namespace Main.Supervisor
             if (allData == null) {
                 return new List<UserDetails>(); }
             var result = allData.Select(data => new UserDetails(data)).ToList();
-          
+            _logger.LogInformation("All the Events with userId : {} are retrived",id);
             return result ;
         }
 
@@ -56,8 +61,11 @@ namespace Main.Supervisor
         /// <returns>It returns the list of events</returns>
         public async Task<List<UserDetails>?> GetView(string id, string connectionId)
         {
-            if (id == null||connectionId==null)
+            _logger.LogInformation("GetView method called with id: {Id} and connectionId: {ConnectionId}", id, connectionId);
+               if (id == null||connectionId==null)
             {
+                _logger.LogWarning("id or connectionId parameters are null");
+
                 return null;
             }
             
@@ -78,6 +86,7 @@ namespace Main.Supervisor
 
 
             var result = combinedUsers.Select(userData => new UserDetails(userData)).ToList();
+            _logger.LogInformation("Events retrieved successfully for id: {Id} and connectionId: {ConnectionId}", id, connectionId);
             return result.ToList();
         }
 
@@ -90,15 +99,19 @@ namespace Main.Supervisor
 
         public async Task<UserDetails?> GetEvent(string id)
         {
+            _logger.LogInformation("GetEvent method called in supervisor with event id: {Id}", id);
             if (id == null)
             {
-                // Throw a UserSupervisorException with a specific message indicating the error
+                _logger.LogWarning("id is null");
                 return null;
             }
             var events = await _users.GetId(id);
            
             var UserId = await _connections.Get(events.UserId);
-            if(UserId is null) { return null; }
+            if(UserId is null)
+            {
+                _logger.LogWarning("Invalid UserId parameter: {Id}", UserId);
+                return null; }
             if (UserId.EmailId != null)
             {
                 events.UserId = UserId.EmailId;
@@ -116,7 +129,7 @@ namespace Main.Supervisor
             events.Moderator.Clear();
             events.Moderator.AddRange(moderators!);
             var userDetailsEvent = new UserDetails(events);
-
+            _logger.LogInformation("Events retrieved successfully for id: {Id}", id);
             return userDetailsEvent;
           
         }
@@ -137,14 +150,14 @@ namespace Main.Supervisor
 
         public async Task<UserDetails?> Post(UserDetails newUser)
         {
-            
+            _logger.LogInformation("Post method is called in supervisor");
             UserDetails user;
             UserDetails finalUser;
             UserDetails userCopy;
            
             if (newUser == null)
             {
-                // Throw a UserSupervisorException with a specific message indicating the error
+                _logger.LogWarning("user data is null");
                 return null;
             }
             
@@ -159,6 +172,7 @@ namespace Main.Supervisor
                 bool hasEventClash = allEvents.Any(j => CheckOverlap(newUser, j));
                 if (hasEventClash)
                 {
+                    _logger.LogInformation("There is an event clash, so this event is not created");
                     var copy = new UserDetails(newUser);
                     copy.Id = "eventclash";
                     return copy;
@@ -172,6 +186,7 @@ namespace Main.Supervisor
                     if(userCopy.Moderator.Count==finalUser.Moderator.Count&& userCopy.Connections.Count==finalUser.Connections.Count)
                     
                     {
+                        _logger.LogInformation("Event created successfully");
                         _users.Create(userData);
                         return user;
                     }
@@ -179,7 +194,8 @@ namespace Main.Supervisor
 
             }
             var final = await CheckConnections(userCopy, finalUser);
-                return final;
+            _logger.LogInformation("Some of the moderators/connections are not available, so the event is not created");
+            return final;
             
         }
 
@@ -188,13 +204,15 @@ namespace Main.Supervisor
         /// In the case of deleting the event the moderators and connections array will be having ObjectIds
         /// So it is first changed into email Ids and email will be sent.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Email Details</param>
+        /// <returns>event email details</returns>
         public async Task<EmailDetails?> SendMail(EmailDetails id)
         {
+            _logger.LogInformation("SendMail method called");
             if (id == null)
             {
-                // Throw a UserSupervisorException with a specific message indicating the error
+                _logger.LogWarning("Details of the event email is null");
+                
                 return null;
             }            
                 var userEmail = await _connections.Get(id.UserEmail);
@@ -234,6 +252,7 @@ namespace Main.Supervisor
             }
             var Id = new EmailData(id);
             _users.SendEmail(Id);
+            _logger.LogInformation("Successfully sent the email");
             return id;
 
         }
@@ -247,13 +266,13 @@ namespace Main.Supervisor
         /// <returns>updated document</returns>
         public async Task<UserDetails?> Update(UserDetails updatedUser)
         {
-           
+            _logger.LogInformation("Update method in supervisor for event details called.");
             UserDetails user;
             UserDetails finalUser;
             UserDetails userCopy;
             if (updatedUser == null)
             {
-                // Throw a UserSupervisorException with a specific message indicating the error
+                _logger.LogWarning("Invalid user data received.");
                 return null;
             }
             lock (createEventLock)
@@ -268,6 +287,7 @@ namespace Main.Supervisor
                 {
                     var copy = new UserDetails(updatedUser);
                     copy.Id = "eventclash";
+                    _logger.LogInformation("There is an event clash, so this event cant be edited");
                     return copy;
                 }
                 else
@@ -279,12 +299,14 @@ namespace Main.Supervisor
                     if (userCopy.Moderator.Count == finalUser.Moderator.Count && userCopy.Connections.Count == finalUser.Connections.Count)
                     {
                         _users.Update(userData);
+                        _logger.LogInformation("Event Edited successfully");
                         return user;
                     }
                 }
              
             }
             var final = await CheckConnections(userCopy, finalUser);
+            _logger.LogInformation("Some of the moderators/connections are not available, so the event cant be edited");
             return final;
 
         }
@@ -300,9 +322,10 @@ namespace Main.Supervisor
         /// <returns></returns>
         public  UserDetails? Delete(string id, string userId)
         {
+            _logger.LogInformation("Delete method for event details called.");
             if (id == null||userId==null)
             {
-                // Throw a UserSupervisorException with a specific message indicating the error
+                _logger.LogWarning("Invalid id or userId received.");
                 return null;
             }
             lock (createEventLock)
@@ -321,6 +344,7 @@ namespace Main.Supervisor
                     _users.Update(user);
 
                 }
+                _logger.LogInformation("Event data deleted successfully.");
                 return userDetails;
             }
 
@@ -383,7 +407,7 @@ namespace Main.Supervisor
         /// <returns>updated event document</returns>
         public async Task<UserDetails> Filtering(UserDetails newUser)
         {
-            
+            _logger.LogInformation("Filtering method is called");
             var res = await Task.WhenAll(newUser.Moderator.Select(async email =>
             {
                 var connection = await _connections.GetId(email);
@@ -404,7 +428,7 @@ namespace Main.Supervisor
 
             HashSet<string> moderators = new HashSet<string>(newUser.Moderator);
             newUser.Connections = newUser.Connections.Where(str => !moderators.Contains(str)).ToList();
-            
+            _logger.LogInformation("Filtering method is executed successfully");
             return newUser;
         }
 
@@ -416,7 +440,7 @@ namespace Main.Supervisor
         /// <returns>updated event document</returns>
         public async Task<UserDetails> Overlap (UserDetails newUser)
         {
-           
+            _logger.LogInformation("Overlap method is called");
             var users = new List<string>();
             var moderator = new List<string>();
             for (int i = 0; i < newUser.Connections.Count + newUser.Moderator.Count; i = i + 1)
@@ -445,6 +469,7 @@ namespace Main.Supervisor
             newUser.Moderator.Clear();
             newUser.Moderator.AddRange(moderator);
             newUser.Connections.AddRange(users);
+            _logger.LogInformation("Overlap method is executed successfully");
             return newUser;
         }
 
@@ -457,11 +482,12 @@ namespace Main.Supervisor
         /// <returns>if overlap true, else false</returns>
         public bool CheckOverlap(UserDetails newUser, UserDetails existingUser)
         {
+            _logger.LogInformation("CheckOverlap method is called");
             var startDateNew = DateTime.Parse(newUser.StartDate);
             var endDateNew = DateTime.Parse(newUser.EndDate);
             var startDateExisting = DateTime.Parse(existingUser.StartDate);
             var endDateExisting = DateTime.Parse(existingUser.EndDate);
-
+            _logger.LogInformation("CheckOverlap method is finished successfully");
             return (startDateNew >= startDateExisting && startDateNew < endDateExisting) ||
                    (endDateNew > startDateExisting && endDateNew <= endDateExisting) ||
                    (startDateNew <= startDateExisting && endDateNew >= endDateExisting);
@@ -476,6 +502,7 @@ namespace Main.Supervisor
 
         public async Task<UserDetails> CheckConnections(UserDetails newUser, UserDetails user)
         {
+            _logger.LogInformation("CheckConnections method is called");
             var newUserModerators = new HashSet<string>(newUser.Moderator);
             var newUserConnections = new HashSet<string>(newUser.Connections);
 
@@ -507,7 +534,7 @@ namespace Main.Supervisor
             finalUser.Id = (user.Moderator.Count == 0 && user.Connections.Count == 0) ? "noevent" : "someevent";
 
 
-            // Return the finalUser object
+            _logger.LogInformation("CheckConnections method is finished successfully");
             return finalUser;
         }
 

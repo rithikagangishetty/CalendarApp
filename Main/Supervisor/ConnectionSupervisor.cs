@@ -2,6 +2,7 @@
 using Main.Models;
 using Main.Repository;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
@@ -13,9 +14,11 @@ namespace Main.Supervisor
 {
     public class ConnectionSupervisor : IConnectionSupervisor
     {
-        private IConnection _connection;
-        public ConnectionSupervisor(IConnection connection)
+        private readonly IConnection _connection;
+        private readonly ILogger<IConnectionSupervisor> _logger;
+        public ConnectionSupervisor(IConnection connection, ILogger<IConnectionSupervisor> logger)
         {
+            _logger= logger;
             _connection = connection;
         }
         /// <summary>
@@ -25,19 +28,22 @@ namespace Main.Supervisor
         /// <returns>The user document</returns>
         public async Task<ConnectionDetails?> GetId(string email)
         {
+            _logger.LogInformation("GetId method in supervisor is called with email: {EmailId}", email);
+
             if (email == null)
             {
-
+                _logger.LogWarning("Email is null");
                 return null;
             }
             var user = await _connection.GetId(email);
            
             if (user is null)
             {
+                _logger.LogWarning("User is null");
                 return null;
             }
             var result = new ConnectionDetails(user);
-
+            _logger.LogInformation("User found for email: {EmailId}", email);
             return result;
         }
 
@@ -47,8 +53,13 @@ namespace Main.Supervisor
         /// <returns>List of all the email Ids</returns>
         public async Task<List<string>> Get()
         {
+            _logger.LogInformation("Get method in supervisor is called");
+
             var res = await _connection.GetAll();
-            if (res == null) { return new List<string>(); }
+            if (res == null) {
+                _logger.LogInformation("No Emails are found in the database");
+                
+                return new List<string>(); }
             var result = new List<string>();
             
                 foreach (var x in res)
@@ -57,7 +68,7 @@ namespace Main.Supervisor
                         
                     
                 }
-            
+            _logger.LogInformation("Get method successful.");
             return result;
         }
 
@@ -69,16 +80,19 @@ namespace Main.Supervisor
         /// <returns>The user document</returns>
         public async Task<ConnectionDetails?> GetEmailId(string id)
         {
+            _logger.LogInformation("GetEmailId (supervisor) method is called with id: {Id}", id);
             if (id == null)
             {
-
+                _logger.LogWarning("User Id is null");
                 return null;
             }
             var result = await _connection.Get(id);
-            if(result == null) { return null; }
+            if(result == null) {
+                _logger.LogWarning("User not found");
+                return null; }
             var connection = new ConnectionDetails(result);
-            
 
+            _logger.LogInformation("User found");
             return connection;
         }
 
@@ -90,15 +104,18 @@ namespace Main.Supervisor
         /// <returns>Same document but the connections array with emailIds</returns>
         public async Task<ConnectionDetails?> GetEmail(string id)
         {
+            _logger.LogInformation("GetEmail method in supervisor is called with id: {Id}", id);
             if (id == null)
             {
-                
+                _logger.LogWarning("Id is null");
                 return null;
             }
             var connections = await _connection.Get(id);
-            if(connections == null) { return null; }
+            if(connections == null) {
+                _logger.LogWarning("User not found");
+                return null; }
 
-            //var newConnections = new List<string>();
+            
             var newUser = new ConnectionDetails
             {
                 Id = id
@@ -113,6 +130,8 @@ namespace Main.Supervisor
 
             newUser.EmailId = connections.EmailId;
             newUser.Connection = newConnections;
+            _logger.LogInformation("GetEmail method is succesfully executed");
+
             return newUser;
         }
 
@@ -123,13 +142,16 @@ namespace Main.Supervisor
 
         public async Task<ConnectionDetails?> Post(ConnectionDetails user)
         {
+            _logger.LogInformation("Post Method is called");
             if (user == null)
             {
+                _logger.LogWarning("User is null ");
                 return null;
                 
             }
             var userData = new ConnectionData(user);
             await _connection.Create(userData);
+            _logger.LogInformation("Post Method is executed");
             return user;
 
         }
@@ -143,9 +165,11 @@ namespace Main.Supervisor
         /// <returns></returns>
         public async Task<ConnectionDetails?> Update(ConnectionDetails user)
         {
+            _logger.LogInformation("Update method for connection called.");
 
             if (user == null)
             {
+                _logger.LogWarning("user data is null.");
                 return null;
             }
             var lastConnection = user.Connection.LastOrDefault();
@@ -163,8 +187,8 @@ namespace Main.Supervisor
                         {
                             await _connection.Update(response, connect);
                         }
-
-                        return final;
+            _logger.LogInformation("User data updated successfully.");
+            return final;
                     
                 
             
@@ -179,8 +203,11 @@ namespace Main.Supervisor
         /// <returns></returns>
         public async Task<string?> Delete(string emailId, string id)
         {
+            _logger.LogInformation("Delete method for connection called.");
+
             if (emailId == null || id == null)
             {
+                _logger.LogWarning("id or emailId received are null.");
                 return null;
                
             }
@@ -188,7 +215,11 @@ namespace Main.Supervisor
             var user = await _connection.Get(id);
            
             var connection = await _connection.GetId(emailId);
-            if (user is null || connection is null) { return null; }
+            if (user is null || connection is null) 
+            {
+                _logger.LogError("user or connection is null, could not delete the data");
+                return null; 
+            }
            
                user.Connection.Remove(connection.Id); 
                 
@@ -196,7 +227,7 @@ namespace Main.Supervisor
                connection.Connection.Remove(user.Id);
             await _connection.Update(user, user.Connection);
             await _connection.Update(connection, connection.Connection);
-            
+            _logger.LogInformation("User data deleted successfully.");
             return user.Id;
 
         }

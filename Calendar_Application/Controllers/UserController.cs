@@ -22,12 +22,14 @@ namespace Calenderwebapp.Controllers
        
 
         private readonly IUserSupervisor _userSupervisor;
-        public UserController(IUserSupervisor userSupervisor)
+        private readonly ILogger<UserController> _logger;
+        public UserController(IUserSupervisor userSupervisor, ILogger<UserController> logger)
         {
 
             _userSupervisor = userSupervisor;
+            _logger = logger;
            
-           // _userSupervisor.SimulateConcurrentRequests().Wait();
+          
         }
 
         /// <summary>
@@ -38,8 +40,11 @@ namespace Calenderwebapp.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserDetails>>> GetEvents(string id)
         {
+            _logger.LogInformation("GetEvents method called with user id: {Id}", id);
+
             if (string.IsNullOrEmpty(id))
             {
+                _logger.LogWarning("Invalid id parameter: {Id}", id);
                 return BadRequest("Invalid id parameter.");
             }
 
@@ -47,12 +52,12 @@ namespace Calenderwebapp.Controllers
           
             if (!result.Any() || result==null)
             {
-               
+                _logger.LogInformation("No events found for user id: {Id}", id);
                 return new List<UserDetails>();
             }
 
-            
 
+            _logger.LogInformation("Events retrieved successfully for user id: {Id}", id);
             return result;
         }
 
@@ -66,18 +71,20 @@ namespace Calenderwebapp.Controllers
         [HttpGet]
         public async Task<ActionResult<List<UserDetails>>> GetView(string id, string connectionId)
         {
+            _logger.LogInformation("GetView method called with id: {Id} and connectionId: {ConnectionId}", id, connectionId);
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(connectionId))
             {
+                _logger.LogWarning("Invalid id or connectionId parameters. id: {Id}, connectionId: {ConnectionId}", id, connectionId);
                 return BadRequest("Invalid id or connectionId parameters.");
             }
 
             var result = await _userSupervisor.GetView(id, connectionId);
             if (!result.Any())
             {
-
+                _logger.LogInformation("No events found for id: {Id} and connectionId: {ConnectionId}", id, connectionId);
                 return new List<UserDetails>();
             }
-
+            _logger.LogInformation("Events retrieved successfully for id: {Id} and connectionId: {ConnectionId}", id, connectionId);
             return result;
         }
 
@@ -91,17 +98,20 @@ namespace Calenderwebapp.Controllers
         [HttpGet]
         public async Task<ActionResult<UserDetails>> GetEvent(string id)
         {
+            _logger.LogInformation("GetEvent method called with event id: {Id}", id);
             if (string.IsNullOrEmpty(id))
             {
+                _logger.LogWarning("Invalid id parameter: {Id}", id);
                 return BadRequest("Invalid id parameter.");
             }
 
             var events = await _userSupervisor.GetEvent(id);
             if (events == null)
             {
+                _logger.LogWarning("Event details not found for id: {Id}", id);
                 return NotFound();
             }
-
+            _logger.LogInformation("Events retrieved successfully for id: {Id}", id);
             return events;
         }
 
@@ -114,19 +124,24 @@ namespace Calenderwebapp.Controllers
         [HttpPost]
         public async Task<ActionResult<UserDetails>> Post(UserDetails newUser)
         {
+            _logger.LogInformation("Post method is called");
             if (newUser == null)
             {
+                _logger.LogWarning("Invalid user data");
                 return BadRequest("Invalid user data.");
             }
             // Check if the StartDate is greater than the EndDate
             if (DateTime.Parse(newUser.StartDate) >= DateTime.Parse(newUser.EndDate))
             {
+                _logger.LogWarning("Invalid End Date/Time of the event");
                 return BadRequest("Invalid End Date/Time of the event");
             }
 
             var id = await _userSupervisor.Post(newUser);
-            if(id == null) { return BadRequest(); }
-
+            if(id == null) {
+                _logger.LogWarning("Failed to add the data of the event"); 
+                return BadRequest(); }
+            _logger.LogInformation("Added new data successfully");
             return id;
         }
 
@@ -138,13 +153,17 @@ namespace Calenderwebapp.Controllers
         [HttpPost]
         public async Task<ActionResult> SendMail(EmailDetails emailDetails)
         {
+            _logger.LogInformation("SendMail method called");
             if (emailDetails == null)
             {
+                _logger.LogWarning("Details of the event email is invalid");
                 return BadRequest("Invalid email data.");
             }
 
            var details= await _userSupervisor.SendMail(emailDetails);
-            if(details == null) { return BadRequest(); }
+            if(details == null) {
+                _logger.LogWarning("Failed to send email"); return BadRequest(); }
+            _logger.LogInformation("Successfully sent the email");
             return Ok();
         }
 
@@ -157,8 +176,10 @@ namespace Calenderwebapp.Controllers
         [HttpPut]
         public async Task<ActionResult<UserDetails>> Update(UserDetails newUser)
         {
+            _logger.LogInformation("Update method for event details called.");
             if (newUser == null)
             {
+                _logger.LogWarning("Invalid user data received.");
                 return BadRequest("Invalid user data.");
             }
             if (DateTime.Parse(newUser.StartDate) >= DateTime.Parse(newUser.EndDate))
@@ -181,16 +202,20 @@ namespace Calenderwebapp.Controllers
         [HttpDelete]
         public  ActionResult<UserDetails> Delete(string id, string userId)
         {
+            _logger.LogInformation("Delete method for event details called.");
             if (string.IsNullOrEmpty(id) || string.IsNullOrEmpty(userId))
             {
+                _logger.LogWarning("Invalid id or userId received.");
                 return BadRequest("Invalid id or userId parameters.");
             }
 
             var user =  _userSupervisor.Delete(id, userId);
             if (user == null)
             {
+                _logger.LogError("Failed to delete the event data.");
                 return NotFound();
             }
+            _logger.LogInformation("Event data deleted successfully.");
 
             return user;
         }

@@ -96,7 +96,7 @@ function Home() {
     function GetEmail() {
         axios.get(`${baseUrl}/Connection/GetUser/`, { params: { id: id } }).then((response) => {
             setEmailId(response.data.emailId);
-        });
+        }).catch((error) => { alert(error); });
     }
 
     React.useEffect(() => {
