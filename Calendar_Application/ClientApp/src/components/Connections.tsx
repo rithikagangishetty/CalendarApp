@@ -99,10 +99,6 @@ function Connections() {
             if (emails.length > 0) {
                 setEmailIds(emails);
             }
-            if (emails.length === 0) {
-                setCurrentTaskType('noconnections');
-                setShowModal(true);
-            }
         }).catch((error) => {
             alert(error);
         });

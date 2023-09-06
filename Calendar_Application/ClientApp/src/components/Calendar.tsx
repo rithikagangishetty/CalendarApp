@@ -11,7 +11,7 @@ import './NavMenu.css';
 import { Form } from 'react-bootstrap';
 import Button from 'react-bootstrap/Button';
 import Modal from 'react-bootstrap/Modal';
-import MyModal, { EditEventModal, CreateEventModal, SelectEmailModal, EventModal, DeleteConfirmModal, Logout } from './Modal';
+import MyModal, { EditEventModal, CreateEventModal, SelectEmailModal, EventModal, DeleteConfirmModal, Logout, AddConfirmModal } from './Modal';
 
 
 
@@ -40,6 +40,7 @@ const CalendarApp: FC = () => {
     const [userEmail, setUserEmail] = useState<string>('');
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [confirmationModal, setConfirmationModal] = useState(false);
+    const [addConfirmModal, setAddConfirmModal] = useState(false);
     const [titleInput, setTitleInput] = useState<string>('');
     const [startDate, setStart] = useState<Date>(new Date());
     const [endDate, setEnd] = useState<Date>(new Date());
@@ -80,7 +81,13 @@ const CalendarApp: FC = () => {
     function goBack() {
         navigate(`/Home/${id}`);
     }
-    
+
+ /**
+ * Navigates to the connection page.
+ */
+    function navigation() {
+        navigate(`/Home/Connections/${id}`);
+    }
     moment.tz.setDefault(selectedTimezone);
 
     /**
@@ -243,9 +250,9 @@ const CalendarApp: FC = () => {
             setConnections(response.data.connection);
             var res = response.data.connection;
             if (res.length == 0) {
-                setCurrentTaskType('noconnections');
-                setShowModal(true);
-                navigate(`/Home/Connections/${id}`);
+
+                setAddConfirmModal(true);
+               
             }
         }).catch((error) => {
             alert(error+"to get all connections")
@@ -1133,6 +1140,11 @@ const CalendarApp: FC = () => {
                 show={confirmationModal}
                 onClose={onCloseConfirm}
                 onDelete={DeleteEvent}
+            />
+            <AddConfirmModal
+                show={addConfirmModal}
+                onClose={()=>setAddConfirmModal(false)}
+                onClick={navigation}
             />
            
            

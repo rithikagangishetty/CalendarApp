@@ -73,7 +73,7 @@ function Home() {
      * Go back to the previous page.
      */
     function goBack() {
-        navigate(-1);
+        navigate(`/`);
     }
 
     /**

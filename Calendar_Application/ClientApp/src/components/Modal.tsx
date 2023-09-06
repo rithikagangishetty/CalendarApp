@@ -39,7 +39,13 @@ interface DeleteConfirmProps {
     
 
 }
+interface AddConfirmProps {
+    show: boolean;
+    onClose: () => void;
+    onClick: (event: any) => void;
 
+
+}
 
 
 interface CreateEventModalProps {
@@ -920,6 +926,45 @@ export const DeleteConfirmModal: React.FC<DeleteConfirmProps> = ({ show, onClose
         </Modal>
     );
        
+};
+
+/**
+ * Add connection confirmation modal component.
+ *
+ * @param {object} props - Component properties.
+ * @param {boolean} props.show - Whether the modal should be displayed.
+ * @param {function} props.onClose - Callback function when the modal is closed.
+ * @param {function} props.onClick - Callback function when the add connection action is confirmed.
+ */
+
+export const AddConfirmModal: React.FC<AddConfirmProps> = ({ show, onClose, onClick }) => {
+
+    return (
+        <Modal show={show} onHide={onClose}>
+            <Modal.Header style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}>
+                <Modal.Title> <strong> Message </strong></Modal.Title>
+            </Modal.Header>
+            <Modal.Body style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+            }}>
+                <p><strong>No Connections Found! Please add a connection.</strong></p>
+            </Modal.Body>
+            <Modal.Footer>
+
+                <Button variant="secondary" onClick={onClick}>
+                    Ok
+                </Button>
+               
+            </Modal.Footer>
+        </Modal>
+    );
+
 };
 
 
