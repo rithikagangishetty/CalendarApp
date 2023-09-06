@@ -873,18 +873,23 @@ const CalendarApp: FC = () => {
     const calendarContainerStyle = {
         height: "80vh",
         background: "white",
-        width: "90%",
-        padding:"10px"
+        width: "100%",
+        padding: "10px",
+         '@media (max-width: 768px)': {
+            height: "60vh",
+            width: "150%",
+            padding: "5px",
+        }
        
     };
 
     return (
-         
-        <div style={{ paddingTop: '20px', height: '80%', overflow: 'hidden', paddingBottom: '20px'}} >
+
+        <div style={{ paddingTop: '20px', paddingBottom: '20px', textAlign: "center" }} >
 
             <br />
             <StyledDiv>
-                <label style={{ fontSize: '28px', fontWeight: 'bold', paddingBottom: "10px" }}> Welcome To Your Calendar Page,{userEmail}! </label>
+                <label style={{ fontSize: '28px', fontWeight: 'bold', paddingTop: '30px', paddingBottom: "10px" }}> Welcome To Your Calendar Page,{userEmail}! </label>
                 <br/>
                 <label style={{ fontSize: '20px', fontWeight: 'bold', paddingBottom: "10px" }}> Select Timezone </label>
                
@@ -961,8 +966,7 @@ const CalendarApp: FC = () => {
                 }}
                 
                     popup={true}
-                    style={calendarContainerStyle}
-                step={15}
+                   style={calendarContainerStyle}              step={15}
                 />
             </div>
             <Logout />

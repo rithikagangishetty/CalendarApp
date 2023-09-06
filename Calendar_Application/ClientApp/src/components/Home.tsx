@@ -38,26 +38,17 @@ const ConnectionContainer = styled.div`
  */
 const Button = styled.button`
   margin: 0px 10px;
-  width: 200px;
+    width : auto;
   padding: 10px 20px;
   background-color: floralwhite;
   color: black;
+   @media (max-width: 768px) {
+    
+    width: auto; 
+  }
 `;
 
-/**
- * Styled button for navigation back.
- */
-const BackButton = styled.button`
-  position: absolute;
-  top: 20px;
-  left: 20px;
-  padding: 10px 20px;
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-`;
+
 
 /**
  * Home component.
@@ -112,14 +103,19 @@ function Home() {
                 </StyledDiv>
                 <br />
                 <ButtonContainer>
-                    <Button className="btn btn-primary mt-4" onClick={connect}>
+                    <Button className="btn-primary mt-4" onClick={connect}>
                         Connections Page
                     </Button>
-                    <Button className="btn btn-primary mt-4" onClick={calendar}>
+                    <Button className="btn-primary mt-4" onClick={calendar}>
                         Calendar Page
                     </Button>
                 </ButtonContainer>
-                <BackButton onClick={goBack}>Back</BackButton>
+                <div>
+                    <button className="back-button" onClick={goBack}>
+                        Back
+                    </button>
+
+                </div>
             </ConnectionContainer>
         </div>
     );

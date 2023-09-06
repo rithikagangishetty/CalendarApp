@@ -29,9 +29,16 @@ function Connections() {
     //UseEffect renders the Get() and GetAll() function whenever a change is occured which can be obtained by currentTaskType.
     useEffect(() => {
                 Get();
-             GetAll();
+        GetAll();
+       
         
     }, [currentTaskType]);
+
+
+    const [isEllipsisVisible, setIsEllipsisVisible] = useState(false);
+
+    // Function to check if ellipsis is needed
+   
 
 /**
  * Function to handle closing the modal and resetting the connection state.
@@ -52,6 +59,17 @@ function Connections() {
             setExpandedEmail(index);
         }
     };
+
+    const [expandedEmails, setExpandedEmails] = useState<string[]>([]);
+
+    // Function to toggle email expansion
+    function toggleEmailExpansion(email: string) {
+        if (expandedEmails.includes(email)) {
+            setExpandedEmails(expandedEmails.filter(e => e !== email));
+        } else {
+            setExpandedEmails([...expandedEmails, email]);
+        }
+    }
 
     /**
  * Function to navigate back to the home page.
@@ -291,7 +309,7 @@ function Connections() {
 
                         <form style={styles.form}>
                             <div className="style">
-                                <label style={{ fontSize: '28px', fontWeight: 'bold', paddingBottom: "10px" }}> Welcome To Your Connections Page,  {userEmail}! </label>
+                                <label style={{ fontSize: '28px', fontWeight: 'bold', paddingBottom: "10px", paddingTop: "10px" }}> Welcome To Your Connections Page,  {userEmail}! </label>
                                 <br/>
                             
                             </div>
@@ -309,42 +327,42 @@ function Connections() {
                                     className="formControl"
                                     id="emailid"
                                     value={connection}
-                                    placeholder="Add Email of the required connection"
+                                    placeholder="Add EmailId"
                                     onChange={(event) => {
                                         setConnection(event.target.value);
                                     }}
                                 />
                             </div>
 
-                            <div style={{ textAlign: "center" }}>
+                            <div style={{ textAlign: "center", padding:"10px" }}>
                         <button className="btn btnPrimary mt-4" onClick={Update}>
                             Add Connection
                             </button>
                             </div>
                            
+                           
                             <div>
                                 {allEmails
                                     .filter(email => (!emailIds.includes(email) && email !== userEmail))
                                     .map((email, index) => (
-                                        
-                                            <div className="tag">
-                                            <span> {email}</span>  
-                                                <FaPlus className="add-icon"
-                                                    
-                                                    type="button"
-                                                    onClick={() => handleUpdate(email)}
-                                                    style={{ cursor: 'pointer' }}  />                                              
-                                            </div>
-                                           
+                                        <div className={`customTag ${expandedEmails.includes(email) ? 'expandedCustomTag' : ''}`} key={index}>
+                                            <span onClick={() => toggleEmailExpansion(email)}>{email}</span>
+                                            <FaPlus
+                                                className="add-icon"
+                                                type="button"
+                                                onClick={() => handleUpdate(email)}
+                                                style={{ cursor: 'pointer' }}
+                                            />
+                                        </div>
                                     ))}
-                            </div>
+                                    </div>
                         </form>
                         {emailIds.length > 0 && (
                        <><hr style={{ borderTop: "1px solid black", margin: "20px 0" }} /><div style={{ textAlign: "center", paddingTop: "10px", paddingBottom: "10px" }}> {/* Centered container for the label */}
                                 <label style={{ fontSize: "20px", fontWeight: "bold", textAlign: "center" }}>Your Connections</label>
                             </div><table className="CustomTable" style={{ ...styles.table, tableLayout: 'fixed' /*, borderCollapse: 'collapse' */ }}>
                                     <colgroup>
-                                        <col style={{ width: '60%' }} /> {/* Adjust the column widths as needed */}
+                                        <col style={{ width: '60%' }} />
                                         <col style={{ width: '20%' }} />
                                         <col style={{ width: '20%' }} />
                                     </colgroup>
@@ -357,19 +375,22 @@ function Connections() {
                                                 >
                                                     {email}
                                                 </td>
-                                                <td className="customTableCell" style={{ textAlign: "center" }}>
+                                                <td className="customCell" >
                                                     <button
                                                         type="button"
-                                                        className="btn btn-success"
+                                                        className="customButton btn btn-success"
                                                         onClick={() => handleViewCalendar(email)}
                                                     >
+
                                                         View Calendar
                                                     </button>
                                                 </td>
-                                                <td className="customTableCell" style={{ textAlign: "center" }}>
+                                               
+
+                                                <td className="customCell" >
                                                     <button
                                                         type="button"
-                                                        className="btn btn-danger"
+                                                        className="customButton btn btn-danger"
                                                         onClick={() => DeleteEventConfirm(email)}
                                                     >
                                                         Delete

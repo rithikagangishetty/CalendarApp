@@ -5,9 +5,13 @@ body {
     background-image: url("C:\Users\GANGISHETTY RITHIKA\Downloads\17973908.jpg");
     background-repeat: no-repeat;
     background-size: cover;
+    background-position: center center;
     margin: 0; /* Reset default body margin */
-    
 }
+
+
+
+
 .left-aligned-input {
 
     text-align: left;
@@ -17,12 +21,7 @@ body {
     cursor: pointer;
     text-decoration: underline;
 }
-/*.customTableCell {
-    padding: 10px;
-    white-space: normal;
-    word-break: break-all;
-    background-color: white;
-}*/
+
 .customTableCell {
     padding: 10px;
     text-overflow: ellipsis;
@@ -30,12 +29,23 @@ body {
     overflow: hidden;
     background-color: white;
 }
+.customCell {
+    word-break: break-word;
+    white-space: nowrap;
+    overflow: hidden;
+    background-color: white;
+}
+
 
     .customTableCell.expanded {
         white-space: normal;
         word-break: break-all;
     }
-
+.ellipsis {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
 .CustomTable {
     /*border-collapse: collapse;*/
     padding: 5px;
@@ -58,10 +68,8 @@ body {
     padding-left: 55px;
 }
 
-
 .form-inline {
     display: flex;
-   
 }
 
     /* Optional: Add spacing between label and input */
@@ -85,7 +93,16 @@ body {
     width:425px;
    
 }
-
+@media (min-height: 1000px) {
+    body {
+        background-color: transparent;
+        background-image: url("C:\Users\GANGISHETTY RITHIKA\Downloads\17973908.jpg");
+        background-repeat: no-repeat;
+        background-size: 500%;
+        background-position: center center;
+        margin: 0; /* Reset default body margin */
+    } 
+}
     .truncated.expanded {
         white-space: normal;
         word-wrap: break-word;
@@ -175,24 +192,35 @@ body {
     border-color: #007bff;
     outline: none;
 }
+/* Default styling for the button */
+.customButton {
+   
+    font-size: 16px;
+    border-radius: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Media query for screens with a maximum width of 768px */
+@media (max-width: 768px) {
+    .customButton {
+       
+        font-size: 12px; 
+        padding: 5px; 
+    }
+}
 
 @media (max-width: 768px) {
     .form-control,
-    .formControl, .btn-primary ,.connections-container , .button-container ,.CustomTable ,.customTableCell ,.expanded ,.hide ,.login-container , .modal-container , .my-form
+    .formControl, .btn-primary ,.connections-container , .button-container ,.customCell,.CustomTable ,.customTableCell ,.expanded ,.hide ,.login-container , .modal-container , .my-form
     , .my-heading-1 ,.my-heading-2 ,.truncate ,.btnPrimary {
         max-width: 100%; 
         width:100%;/* Allow the input to take the full available width on smaller screens */
         
     }
 }
-@media (max-width:300px) {
-    .calendarContainerStyle {
-        height: 100%;
-        background: white;
-        width:100%;
-       
-    }
-}
+
 @media (max-width: 768px) {
    .expand{
        width:100%;
@@ -200,6 +228,14 @@ body {
     .truncated {
         width: 300px;
     }
+    .calendarContainerStyle {
+        height: 90vh;
+        background: white;
+        width: 150%;
+        padding-top: 40px;
+        padding-left: 55px;
+    }
+   
 }
 
 .btn-primary {
@@ -213,8 +249,10 @@ body {
     cursor: pointer;
 }
 
-.btnPrimary {
-    width: 200px; /* Make the button full width */
+
+
+    .btnPrimary {
+    width: auto; /* Make the button full width */
     padding: 10px;
     font-size: 18px;
     justify-content: flex-end;
@@ -225,22 +263,32 @@ body {
     cursor: pointer;
 }
 
-/* Make the modal overlay responsive */
-/*.modal-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: fixed;
-    top: 0;
-    left: 0;
+.btn-primary mt-4 {
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 999;
+    background-color: #007bff;
+    cursor: pointer;
 }
-    .modal-container.hide {
-        display: none;
-    }*/
+@media (max-width: 768px) {
+    .btn-primary mt-4 
+    {
+        width :50%;
+    }
+   
+}
+/* Define a CSS class for button text ellipsis */
+
+
+/* Apply ellipsis to the buttons in a media query for small screens */
+@media (max-width: 768px) {
+    .customCell button {
+        width: 100%; /* Make buttons take up the full width of their parent container */
+    }
+
+        .customCell button .ellipsis {
+            width: 100%;
+        }
+}
+
 /* Update connections page container styles for responsiveness */
 .connections-container {
     text-align: center;
@@ -251,10 +299,13 @@ body {
 }
 
 .style{
+    margin-top:20px;
     margin-bottom:20px;
     font-size:20px;
     text-align:center;
 }
+
+
 
 .back-button {
     position: absolute;
@@ -289,6 +340,27 @@ tagcontainer {
    
 }
 
+/* Default styling for the tag */
+.customTag {
+    padding: 10px;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    background-color: white;
+    /*border-radius: 16px;*/
+   /* margin-right: 8px;
+    margin-bottom: 8px;*/
+}
+
+/* Styling for the expanded tag */
+.expandedCustomTag {
+    white-space: normal;
+    word-break: break-all;
+    background-color: white;
+}
+
+
+
 .tag {
     margin: 20px;
     display: inline-block;
@@ -299,7 +371,7 @@ tagcontainer {
     color: black;
 }
 
-    .tag span {
+    .span {
         margin-right: 8px;
     }
 
@@ -315,6 +387,15 @@ tagcontainer {
         background-color:white;
        
     }
+.add-icon {
+    cursor: pointer;
+    color: #28a745;
+    border-radius: 50%;
+    font-size: 15px;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+}
 
 
 .button-container {
