@@ -6,7 +6,7 @@ This README provides essential information for setting up and understanding the 
 
 The Calendar Application is a web-based calendar application that enables users to create events. Additionally, users have the ability to add their friends as connections and invite them to join events.
 
- Used ASP.NET 6.0, MongoDB, React, TypeScript, HTML and CSS to create the application, adhering to
+ Used ASP.NET 6.0, C#, MongoDB, React, TypeScript, HTML and CSS to create the application, adhering to
 the Honeycomb architecture for enhanced modularity and maintainability.
 
 This application leverages the [react-big-calendar](https://www.npmjs.com/package/react-big-calendar)  as its base for the calendar page.
